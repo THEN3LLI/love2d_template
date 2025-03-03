@@ -6,19 +6,21 @@ Version = {
 
 Active_version = Version.debug
 
-Section = {
+
+Section = { -- sections are part of the game, form mainmenu to game itself
     mainmenu = 1,
     game = 2,
     settings = 3
 }
 Active_section = Section.mainmenu
 
-Gamestate = {
+Gamestate = { -- gamestate declare if the game is playing, or paused. idle is used for ingame menu
     idle = "idle",
     playing = "playing",
     paused = "paused",
     gameover = "gameover"
 }
+Active_gamestate = Gamestate.idle
 
 -------------------- CORE FUNCTIONS (LOVE) ----------------------
 function love.load()
@@ -46,19 +48,44 @@ function load_window()
 end
 
 function love.draw()
-    love.graphics.print(message, 400, 300)
+    if(Active_section == Section.mainmenu) then
+        draw_game_section_mainmenu()
+    end
 end
 
 function love.update()
+    input()
     if Active_section == Section.mainmenu then
         game_section_mainmenu()
+        
     end
 end
+
+function input()
+    if love.keyboard.isDown("escape") then
+        love.event.quit()
+    end
+
+    if Active_version == Version.debug then
+        if love.keyboard.isDown("space") then
+            Active_section = Section.game
+        elseif love.keyboard.isDown("backspace") then
+            Active_section = Section.mainmenu
+        end
+    end
+    
+end
+
 
 ---------------- SECTIONS ----------------------
 function game_section_mainmenu()
     message = "main menu"
 end
+
+function draw_game_section_mainmenu()
+    love.graphics.print(message, 400, 300)
+end
+
 function game_section_one()
     message = "You are in the first section of the game"
 end
